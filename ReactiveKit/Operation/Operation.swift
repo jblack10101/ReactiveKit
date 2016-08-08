@@ -23,8 +23,8 @@
 //
 
 public protocol OperationType: StreamType {
-  typealias Value
-  typealias Error: ErrorType
+  associatedtype Value
+  associatedtype Error: ErrorType
 
   func lift<U, F: ErrorType>(transform: Stream<OperationEvent<Value, Error>> -> Stream<OperationEvent<U, F>>) -> Operation<U, F>
   func observe(on context: ExecutionContext?, observer: OperationEvent<Value, Error> -> ()) -> DisposableType
@@ -197,7 +197,7 @@ public extension OperationType {
           switch event {
           case .Failure(let error):
             if count > 0 {
-              count--
+              count -= 1
               attempt?()
             } else {
               observer.failure(error)

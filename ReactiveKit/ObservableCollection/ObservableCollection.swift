@@ -23,9 +23,9 @@
 //
 
 public protocol ObservableCollectionType: CollectionType, StreamType {
-  typealias Collection: CollectionType
-  typealias Index = Collection.Index
-  typealias Element = Collection.Generator.Element
+  associatedtype Collection: CollectionType
+  associatedtype Index = Collection.Index
+  associatedtype Element = Collection.Generator.Element
   
   var collection: Collection { get }
   func next(event: ObservableCollectionEvent<Collection>)
@@ -109,7 +109,7 @@ public final class ObservableCollection<Collection: CollectionType>: ActiveStrea
   }
 }
 
-@warn_unused_result
+
 public func create<C: CollectionType>(producer: (ObservableCollectionEvent<C> -> ()) -> DisposableType?) -> ObservableCollection<C> {
   return ObservableCollection(producer: producer)
 }
@@ -126,7 +126,7 @@ public extension ObservableCollectionType {
 public extension ObservableCollectionType where Collection.Index == Int {
   
   /// Each event costs O(n)
-  @warn_unused_result
+  
   public func map<U>(transform: Collection.Generator.Element -> U) -> ObservableCollection<Array<U>> {
     return create { observer in
       return self.observe(on: nil) { event in
@@ -136,7 +136,7 @@ public extension ObservableCollectionType where Collection.Index == Int {
   }
   
   /// Each event costs O(1)
-  @warn_unused_result
+  
   public func lazyMap<U>(transform: Collection.Generator.Element -> U) -> ObservableCollection<LazyMapCollection<Collection, U>> {
     return create { observer in
       return self.observe(on: nil) { event in
@@ -149,7 +149,7 @@ public extension ObservableCollectionType where Collection.Index == Int {
 public extension ObservableCollectionType where Collection.Index == Int {
   
   /// Each event costs O(n)
-  @warn_unused_result
+  
   public func filter(include: Collection.Generator.Element -> Bool) -> ObservableCollection<Array<Collection.Generator.Element>> {
     return create { observer in
       return self.observe(on: nil) { event in
@@ -162,7 +162,7 @@ public extension ObservableCollectionType where Collection.Index == Int {
 public extension ObservableCollectionType where Collection.Index: Hashable {
   
   /// Each event costs O(n*logn)
-  @warn_unused_result
+  
   public func sort(isOrderedBefore: (Collection.Generator.Element, Collection.Generator.Element) -> Bool) -> ObservableCollection<Array<Collection.Generator.Element>> {
     return create { observer in
       return self.observe(on: nil) { event in
@@ -175,7 +175,7 @@ public extension ObservableCollectionType where Collection.Index: Hashable {
 public extension ObservableCollectionType where Collection.Index: Equatable {
   
   /// Each event costs O(n^2)
-  @warn_unused_result
+  
   public func sort(isOrderedBefore: (Collection.Generator.Element, Collection.Generator.Element) -> Bool) -> ObservableCollection<Array<Collection.Generator.Element>> {
     return create { observer in
       return self.observe(on: nil) { event in

@@ -25,7 +25,7 @@
 import Foundation
 
 public protocol StreamType {
-  typealias Event
+  associatedtype Event
   func observe(on context: ExecutionContext?, observer: Event -> ()) -> DisposableType
 }
 
@@ -141,7 +141,7 @@ extension StreamType {
     return create { observer in
       return self.observe(on: nil) { event in
         if count > 0 {
-          count--
+          count -= 1
         } else {
           observer(event)
         }
